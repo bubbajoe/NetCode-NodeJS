@@ -1,4 +1,3 @@
-//Server-side file. Coded from scratch by Sumant Bagade
 var express  = require('express');
 var app      = express();
 var port     = process.env.PORT || 8080;
@@ -12,7 +11,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
 // configuration ===============================================================
-mongoose.connect('mongodb://localhost/myapp');
+//mongoose.connect('mongodb://localhost/myapp');
 
 require('./app/passport')(passport); // pass passport for configuration
 
