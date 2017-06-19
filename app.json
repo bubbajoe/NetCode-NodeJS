@@ -2,5 +2,6 @@
   "name": "NetCode",
   "description": "TBA",
   "repository": "TBA",
-  "keywords": ["N/A"]
+  "keywords": ["node","express"],
+  "logo": "http://netcode-wesite.herokuapp.com/favicon.ico"
 }
