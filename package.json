@@ -1,0 +1,43 @@
+{
+  "name": "Telecheck",
+  "version": "1.0.0",
+  "description": "A small website related to television shows",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Sumant Bagade",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Subway19/Telecheck"
+  },
+  "engines": {
+    "node": "4.2.1"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.17.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "*",
+    "express": "*",
+    "express-session": "^1.15.3",
+    "method-override": "*",
+    "mongoose": "^4.10.7",
+    "morgan": "^1.8.2",
+    "p": "^0.2.0",
+    "passport": "^0.3.2",
+    "passport-facebook": "*",
+    "passport-google-oauth": "*",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "*"
+  },
+  "devDependencies": {
+    "@angular/cli": "^1.1.2",
+    "gulp": "*",
+    "gulp-nodemon": "*",
+    "nodemon": "*"
+  }
+}
