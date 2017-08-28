@@ -1,7 +1,8 @@
 # NetCode Website
 
-The site's live here - <a href="http://netcode-server.herokuapp.com/">NetCode</a>
+The site's live here - <a href="http://netcode-website.herokuapp.com/">NetCode</a>
 
+![Alt text](https://github.com/shadowkingbubba/NetCode-Website/blob/master/WebsiteScreenshot.png?raw=true)
 
 Make sure **Node.js** is installed and running on your system. For installation, check <a href="https://nodejs.org/">Node.js</a>
 
