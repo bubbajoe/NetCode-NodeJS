@@ -27,15 +27,15 @@
     float: right;
   }
   .panel {
-    background: #f7f7f7;
+    background: rgba(150, 150, 0, 0.5);
     padding: 3px 7px;
     font-size: 0.85em;
   }
   .panel.top, .panel.after-top {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.5);
   }
   .panel.bottom, .panel.before-bottom {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid rgba(255, 0, 0, 0.5);
   }
 </style>
 
@@ -57,7 +57,7 @@
 <h2>Panel Demo</h2>
 
 <div class="border">
-    <textarea id="code" name="code"></textarea>
+    <textarea id="code" name="code" rows="5"></textarea>
 </div>
 
 <p>
@@ -89,10 +89,18 @@ var numPanels = 0;
 var panels = {};
 var editor;
 
-textarea.value = demo.innerHTML.trim();
+//textarea.value = demo.innerHTML.trim();
 editor = CodeMirror.fromTextArea(textarea, {
   lineNumbers: true,
-  mode: "htmlmixed"
+  mode: "htmlmixed",
+  extraKeys: {
+    "F11": function(cm) {
+      cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+    },
+    "Esc": function(cm) {
+      if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+    }
+  }
 });
 
 function makePanel(where) {

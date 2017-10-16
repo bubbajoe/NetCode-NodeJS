@@ -44,6 +44,7 @@
 		.home {
 			margin-top: 100px;
 		}
+<<<<<<< HEAD
 
 		#bottom-editor {
 			background-color: red;
@@ -56,11 +57,19 @@
 		#code{
 			z-index: 0;
 			position: relative;
+=======
+		.CodeMirror-fullscreen {
+			position: fixed;
+			top: 0; left: 0; right: 0; bottom: 0;
+			height: auto;
+			z-index: 9;
+>>>>>>> 8653cc6130a353f48d8edc1dd024df8d080eff10
 		}
 	</style>
 </head>
 
 <body class="home">
+<<<<<<< HEAD
 	
 <% include partials/navbar.ejs %>
 
@@ -91,6 +100,106 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 		"Esc": function(cm) {
 			if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
 			document.getElementById("code").style.zIndex = 0;
+=======
+	<!-- Fixed navbar -->
+	<% include partials/navbar.ejs %>
+	<!-- /.navbar -->
+	<div class="container" style="min-height:500px;">
+	<h1 style="text-align:center;color:#999999;margin:0 0 20px 0">
+		{language} : {filename} </h1>
+	<form style="position: relative; margin-top: .5em;">
+	
+	<textarea id=netcode>
+	<!-- Create a simple CodeMirror instance -->
+	<link rel="stylesheet" href="lib/codemirror.css">
+	<script src="lib/codemirror.js"></script>
+	</textarea>
+
+	</form>
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("netcode"), {
+      lineNumbers: true,
+	  mode: "text/javascript",
+	  styleActiveLine: true,
+      matchBrackets: true,
+      theme: "night",
+      extraKeys: {
+        "F11": function(cm) {
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+          if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+      }
+    });
+  </script>
+	
+
+	<p class="center" style="margin-top:20px;">Select a theme: <select onchange="selectTheme()" id=select>
+    <option selected>default</option>
+    <option>3024-day</option>
+    <option>3024-night</option>
+    <option>abcdef</option>
+    <option>ambiance</option>
+    <option>base16-dark</option>
+    <option>base16-light</option>
+    <option>bespin</option>
+    <option>blackboard</option>
+    <option>cobalt</option>
+    <option>colorforth</option>
+    <option>dracula</option>
+    <option>duotone-dark</option>
+    <option>duotone-light</option>
+    <option>eclipse</option>
+    <option>elegant</option>
+    <option>erlang-dark</option>
+    <option>hopscotch</option>
+    <option>icecoder</option>
+    <option>isotope</option>
+    <option>lesser-dark</option>
+    <option>liquibyte</option>
+    <option>material</option>
+    <option>mbo</option>
+    <option>mdn-like</option>
+    <option>midnight</option>
+    <option>monokai</option>
+    <option>neat</option>
+    <option>neo</option>
+    <option>night</option>
+    <option>panda-syntax</option>
+    <option>paraiso-dark</option>
+    <option>paraiso-light</option>
+    <option>pastel-on-dark</option>
+    <option>railscasts</option>
+    <option>rubyblue</option>
+    <option>seti</option>
+    <option>solarized dark</option>
+    <option>solarized light</option>
+    <option>the-matrix</option>
+    <option>tomorrow-night-bright</option>
+    <option>tomorrow-night-eighties</option>
+    <option>ttcn</option>
+    <option>twilight</option>
+    <option>vibrant-ink</option>
+    <option>xq-dark</option>
+    <option>xq-light</option>
+    <option>yeti</option>
+    <option>zenburn</option>
+
+	<script>
+		var input = document.getElementById("select");
+		function selectTheme() {
+			var theme = input.options[input.selectedIndex].textContent;
+			editor.setOption("theme", theme);
+			location.hash = "#" + theme;
+		}
+		var choice = (location.hash && location.hash.slice(1)) ||
+					(document.location.search &&
+						decodeURIComponent(document.location.search.slice(1)));
+		if (choice) {
+			input.value = choice;
+			editor.setOption("theme", choice);
+>>>>>>> 8653cc6130a353f48d8edc1dd024df8d080eff10
 		}
 	}
 });
