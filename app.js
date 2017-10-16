@@ -1,93 +1,66 @@
-var express  = require('express');
-var app      = express();
-var port     = process.env.PORT || 8080;
-var mongoose = require('mongoose');
-var passport = require('passport');
-var flash    = require('connect-flash');
+"use strict";
 
-var morgan       = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser   = require('body-parser');
-var session      = require('express-session');
+var express		= require('express');
+var app			= express();
+var mongo 	 	= require('mongodb').MongoClient;
+var passport 	= require('passport');
+var flash    	= require('connect-flash');
+var morgan      = require('morgan');
+var cookies 	= require('cookie-parser');
+var formidable 	= require('express-formidable');
+var validator	= require('express-validator');
+var session     = require('express-session');
+var io 			= require('socket.io')();
 
-// configuration ===============================================================
-//mongoose.connect('mongodb://localhost/myapp');
+var port 		= process.env.PORT || 8080;
 
-require('./app/passport')(passport); // pass passport for configuration
+require('./app/passport')(passport);
 
-//Middlewares
 app.use(express.static('public'));
 app.use(express.static('src/views'));
-app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(bodyParser()); // get information from html forms
-app.use(session({ secret: 'secret' })); // session secret
+app.use(formidable())
+app.use(morgan('dev'));
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true,
+	cookie: { maxAge: 3600000/2 } // (3600000 = 1 hour)
+}));
+
 app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
+app.use(passport.session());
+
 app.use(flash()); 
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
 
-app.set('views', './src/views');				//for templating engine
+app.use(validator({
+  errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.')
+      , root    = namespace.shift()
+      , formParam = root;
+
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
+}));
+
+app.set('views', './src/views');
 app.set('view engine', 'ejs');
+app.set('mongoUrl','mongodb://localhost:27017/netcode');
 
-require('./app/routes.js')(app, passport);
-
-// Root
-app.get('/', function (req,res) {
-	res.render('index');
-});
-
-app.get('/favicon.ico', function(req,res) {
-
-});
-
-app.get('/home', function (req,res) {
-	res.render('index');
-});
-
-app.get('/netcode', function (req,res) {
-	res.render('netcode');
-});
-
-app.get('/projects', function (req,res) {
-	res.render('projects');
-});
-
-app.get('/login', function (req,res) {
-	res.render('login');
-});
-
-app.get('/register', function (req,res) {
-	res.render('register');
-});
-
-app.get('/code', function (req,res) {
-	res.render('code');
-});
-
-// dynamic download function
-app.get('/download', function (req,res) {
-
-});
-
-app.listen(port,function (err) {
+io.listen(app.listen(port,"0.0.0.0",function (err) {
 	if(err)
-	{
 		console.log(err);
-	}	
-	console.log('Running on ' + port);
-});
+	app.port = port;
+}));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+require('./app/routes.js')(app, io, mongo, passport);

@@ -28,8 +28,7 @@
 	<!-- Font Awesome-->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
-
-		<title>NetCode</title>
+	<title>NetCode</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -39,11 +38,21 @@
 	<link rel="stylesheet" href="assets/css/main.css">
 
 	<style>
+		#messages {
+		margin-top: 30px;
+		text-align: center;
+		}
 		.wrapper {    
 			margin-top: 80px;
 			margin-bottom: 20px;
 		}
-
+		ul {
+			padding: 0;
+			list-style-type: none;
+		}
+		ul li {
+			display: inline;
+		}
 		.form-signin {
 		max-width: 420px;
 		padding: 30px 38px 66px;
@@ -79,10 +88,19 @@
 		margin-bottom: 5px;
 		}
 
+		div {
+			align-content: center;
+
+		}
+
 		input[name="ConfirmPassword"] {
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
 		margin-bottom: 20px;
+		}
+		.alert-danger {
+		background-color: #ebcccc;
+		margin-bottom: 0px;
 		}
 	</style>
 </head>
@@ -95,14 +113,14 @@
 		<div class="wrapper">
 			<form action="" method="post" name="Login_Form" class="form-signin">       
 				<h3 class="form-signin-heading">Welcome! Please Sign Up</h3>
-
 				<input type="text" class="form-control" name="Username" placeholder="Username" required="" autofocus="" />
 				<input type="password" class="form-control" name="Password" placeholder="Password" required=""/>		  
 				<input type="password" class="form-control" name="ConfirmPassword" placeholder="Confirm Password" required=""/>
-				<button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Register</button>  			
+				<button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Register</button>
+				<%- messages() %>	
 			</form>			
 		</div>
-	</div>	<!-- /container -->
+	</div>
 
 	<% include partials/footer.ejs %>
 

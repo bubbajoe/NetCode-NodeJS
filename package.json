@@ -9,20 +9,26 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.17.2",
+    "body-parser": "^1.18.2",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "ejs": "*",
     "express": "*",
+    "express-formidable": "^1.0.0",
+    "express-messages": "^1.0.1",
     "express-session": "^1.15.3",
+    "express-validator": "^4.2.1",
     "method-override": "*",
+    "mongodb": "^2.2.31",
     "mongoose": "^4.10.7",
     "morgan": "^1.8.2",
     "passport": "^0.3.2",
     "passport-facebook": "*",
     "passport-google-oauth": "*",
     "passport-local": "^1.0.0",
-    "passport-twitter": "*"
+    "passport-twitter": "*",
+    "request": "^2.83.0",
+    "socket.io": "*"
   },
   "devDependencies": {
     "@angular/cli": "^1.1.2",
@@ -30,11 +36,11 @@
     "gulp-nodemon": "*",
     "nodemon": "*"
   },
-  "engines" : {
-    "node" : "8.1.0"
+  "engines": {
+    "node": "8.1.0"
   },
-  "repository" :{
-    "type" : "git",
-    "url" : "https://github.com/shadowkingbubba/NetCode-Website.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shadowkingbubba/NetCode-Website.git"
   }
 }

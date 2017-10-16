@@ -1,72 +1,259 @@
+module.exports = function(app, io, mongo, passport) {
 
-module.exports = function(app, passport) {
-
-    // =====================================
-    // HOME PAGE (with login links) ========
-    // =====================================
-    app.get('/', function(req, res) {
-        res.render('index'); // load the index.ejs file
+    io.sockets.on('connection',function(socket) {
+        socket.on("codeUpdate",function(data) {
+            console.log(data);
+            //Check to see if this user is able to edit project
+            //socket.broadcast.to(data.room).emit('codeUpdate', data);
+            socket.broadcast.emit('codeUpdate', data);
+        })
     });
 
-    // =====================================
-    // LOGIN ===============================
-    // =====================================
-    // show the login form
-    app.get('/login', function(req, res) {
+    function createGuid() {
+        function s() { 
+            return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16).substring(1);
+        }
+        return s() + s() + '-' + s() + '-' + s() + '-' +
+            s() + '-' + s() + s() + s();
+    }
 
-        // render the page and pass in any flash data if it exists
-        res.render('login', { message: req.flash('loginMessage') }); 
+    home = function (req,res) {
+        if(req.isAuthenticated()) {
+            console.log(req.username);
+        }
+	    res.render('index',{
+            isLoggedIn: req.isAuthenticated()
+        });
+    }
+    app.get('/', home);
+    app.get('/home', home);
+
+    app.get('/netcode', function (req, res) {
+        // project, file, room
+        if(req.query.p != undefined && 
+            req.query.f != undefined &&
+            req.query.r != undefined ) {
+            res.render('netcode',{
+                isLoggedIn: req.isAuthenticated(),
+                language: "javascript",
+                filename: "netcode.js",
+                file: {
+                    data: "",
+                    name: "",
+                    size: ""
+                }
+            });
+        } else {
+            res.render('netcode',{
+                isLoggedIn: req.isAuthenticated(),
+                language: "javascript",
+                filename: "netcode.js",
+                file: {
+                    data: "",
+                    name: "",
+                    size: ""
+                }
+            });
+        }
     });
 
-    // process the login form
-    // app.post('/login', do all our passport stuff here);
+    app.get('/create', function (req, res) {
+        mongo.connect(app.get('mongoUrl'), function(err, db) {
+            if (err) throw err;
+            var username = req.fields.Username;
+            db.collection("netcode_users").findOne({username:username},function(err,result) {
+                if(result == null) {
+                db.collection("netcode_users").insertOne({
+                    username: username,
+                    password: password,
+                    followers: {}
+                }, function(err, result) {
+                    if (err) throw err;
+                    req.login(result.insertedId, function(err) {
+                        res.redirect('/');
+                    })
+                    db.close();
+                });
+               } else {
+                   req.flash('alert alert-danger','<b>Sorry!</b> That username is already taken.');
+                   res.render('register', {
+                       isLoggedIn: req.isAuthenticated()
+                   });
+               }
+            })
 
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
-    // show the signup form
-    app.get('/register', function(req, res) {
-
-        // render the page and pass in any flash data if it exists
-        res.render('register', { message: req.flash('signupMessage') });
-    });
-
-    app.post('/register', passport.authenticate('local-signup', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/register', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
-    }));
-
-    // process the signup form
-    // app.post('/signup', do all our passport stuff here);
-
-    // =====================================
-    // PROFILE SECTION =====================
-    // =====================================
-    // we will want this protected so you have to be logged in to visit
-    // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
         });
     });
 
-    // =====================================
-    // LOGOUT ==============================
-    // =====================================
+    app.get('/projects/:projectname', function (req,res) {
+        res.redirect('project?pn='+req.params.username);
+    });
+
+    app.get('/projects', function (req,res) {
+        if(obj.username != req.user.username) {
+            mongo.connect(app.get('mongoUrl'), function(err, db) {
+                db.collection("netcode_projects").find({
+                    username: obj.username
+                },{ personalInfo : true }).toArray(function(err, result) {
+                    if (err) throw err;
+                    if(result[0].personalInfo) {
+                        obj = Object.assign(result[0],obj);
+                        console.log(obj);
+                        console.log('obj exists');
+                    }
+                    res.render('profile', {
+                        user : obj,
+                        OtherAccount : true,
+                        isLoggedIn : req.isAuthenticated()
+                    });
+                    db.close();
+                });
+            });
+            return;
+        }
+
+        res.render('projects',{
+            isLoggedIn: req.isAuthenticated()
+        });
+    });
+
+    app.get('/code', function (req,res) {
+        res.render('code', {
+            isLoggedIn: req.isAuthenticated(),
+            language: "javascript",
+            filename: "netcode.js"
+        });
+    });
+
+    app.get('/login', function(req, res) {
+        // render the page and pass in any flash data if it exists
+        res.render('login', {
+            isLoggedIn: req.isAuthenticated()
+        }); 
+    });
+
+    // process the login form
+    app.post('/login', function(req, res) {
+        mongo.connect(app.get('mongoUrl'), function(err, db) {
+            if (err) throw err;
+            db.collection("netcode_users").findOne({
+                username: req.fields.Username,
+                password: req.fields.Password
+            }, function(err, result) {
+                if (err) throw err;
+                if(result == null) {
+                    req.flash('alert alert-danger','<b>Sorry!</b> Incorrect login information.');
+                    res.render('login',{
+                        isLoggedIn: req.isAuthenticated()
+                    });
+                } else {
+                    req.login(result, function() {
+                        req.username = result.username;
+                        console.log(req.username);
+                        res.redirect('/');
+                    });
+                }
+                db.close();
+            });
+        });
+    });
+
+    app.get('/register', function(req, res) {
+        res.render('register', {
+            isLoggedIn: req.isAuthenticated()
+        });
+    });
+
+    app.post('/register', function(req, res) {
+        mongo.connect(app.get('mongoUrl'), function(err, db) {
+            if (err) throw err;
+            var username = req.fields.Username;
+            var password = req.fields.Password;
+            if(password != req.fields.ConfirmPassword) {
+                    req.flash('alert alert-warning','Passwords do not match');
+                    res.render('register', {
+                       isLoggedIn: req.isAuthenticated()
+                   });
+                return;
+            }
+            db.collection("netcode_users").findOne({username:username},function(err,result) {
+
+                if(result == null) {
+                db.collection("netcode_users").insertOne({
+                    username: username,
+                    password: password,
+                    followers: {}
+                }, function(err, result) {
+                    if (err) throw err;
+                    req.login(result.insertedId, function(err) {
+                        res.redirect('/');
+                    })
+                    db.close();
+                });
+               } else {
+                   req.flash('alert alert-danger','<b>Sorry!</b> That username is already taken.');
+                   res.render('register', {
+                       isLoggedIn: req.isAuthenticated()
+                   });
+               }
+            })
+
+        });
+    });
+
+    app.get('/profile', function(req, res) {
+        if(!req.isAuthenticated())
+            return res.redirect('login');
+
+        if(req.query.u != undefined) {
+
+            var obj = { username: req.query.u };
+
+            if(obj.username != req.user.username) {
+
+                mongo.connect(app.get('mongoUrl'), function(err, db) {
+                    
+                    db.collection("netcode_users").find({
+                        username: obj.username
+                    },{ personalInfo : true }).toArray(function(err, result) {
+                        if (err) throw err;
+                        if(result[0].personalInfo) {
+                            obj = Object.assign(result[0],obj);
+                            console.log(obj);
+                            console.log('obj exists');
+                        }
+
+                        res.render('profile', {
+                            user : obj,
+                            OtherAccount : true,
+                            isLoggedIn : req.isAuthenticated()
+                        });
+                        
+                        db.close();
+                    });
+                });
+                return;
+            }
+        }
+
+        obj = req.user;
+        delete obj.password;
+        res.render('profile', {
+            user : obj,
+            OtherAccount : false,
+            isLoggedIn : req.isAuthenticated(),
+            query_var: req.query.id
+        });
+
+    });
+
+    app.get('/profile/:username', function(req, res) {
+        res.redirect('/profile?u='+req.params.username);
+    });
+
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
 };
-
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated())
-        return next();
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}
