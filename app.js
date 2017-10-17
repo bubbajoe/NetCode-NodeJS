@@ -1,18 +1,18 @@
 "use strict";
 
-var express		= require('express');
-var app			= express();
-var mongo 	 	= require('mongodb').MongoClient;
-var passport 	= require('passport');
-var flash    	= require('connect-flash');
+var express		  = require('express');
+var app			    = express();
+var mongo 	 	  = require('mongodb').MongoClient;
+var passport 	  = require('passport');
+var flash    	  = require('connect-flash');
 var morgan      = require('morgan');
-var cookies 	= require('cookie-parser');
+var cookies 	  = require('cookie-parser');
 var formidable 	= require('express-formidable');
-var validator	= require('express-validator');
+var validator	  = require('express-validator');
 var session     = require('express-session');
-var io 			= require('socket.io')();
+var io 			    = require('socket.io')();
 
-var port 		= process.env.PORT || 8080;
+var port 		    = process.env.PORT || 8080;
 
 require('./app/passport')(passport);
 
